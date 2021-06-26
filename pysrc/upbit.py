@@ -17,13 +17,16 @@ def update_data(data_path,tickers,now):
 
     print(now)
     for i in tickers:
-        interval_datas = pyupbit.get_ohlcv(i,interval = "minute3",count=4)
-        bring_last = pandas.read_csv(data_path+i+exten).iloc[-1][0]
-        need_data = interval_datas.loc[bring_last:]
-        if len(need_data)>2:
-            cut_data = need_data.iloc[1:]
-            cut_data.to_csv(data_path+i+exten,mode='a',header=False)
-        print('update '+i)
+        try:
+            interval_datas = pyupbit.get_ohlcv(i,interval = "minute3",count=4)
+            bring_last = pandas.read_csv(data_path+i+exten).iloc[-1][0]
+            need_data = interval_datas.loc[bring_last:]
+            if len(need_data)>2:
+                cut_data = need_data.iloc[1:]
+                cut_data.to_csv(data_path+i+exten,mode='a',header=False)
+            print('update '+i)
+        except:
+            print('unnecessary update'+i)
 
     now = datetime.today()
     return now
