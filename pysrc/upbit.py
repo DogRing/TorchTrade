@@ -13,7 +13,7 @@ exten = '.csv'
 def gettickers():
     return pyupbit.get_tickers("KRW")
 
-def update_data(data_path,tickers,now,ticks=4):
+def update_data(data_path,tickers,now,ticks=21):
     date = now.strftime('%Y-%m-%d')
     time = now.strftime('%H:%M:%S')
     yesterday = now-timedelta(days=1)
@@ -63,8 +63,8 @@ def update_data(data_path,tickers,now,ticks=4):
                 pass
         except:
             # if pyupbit is dead
-            return 200
-    return 4
+            ticks = 200
+    return ticks
 
 def setting(data_path,tickers,now):
     date = now.strftime('%Y-%m-%d')
