@@ -6,9 +6,6 @@ import os
 from datetime import datetime
 from datetime import timedelta
 
-# access_key = 'u31ykk40vZfScWxbVeyMfxctVzGgHU4htQbT9Iz9'
-# secret_key = '3t4a10bumGFf7JtMRzO96C6huN7T4Axd2DthpUJc'
-
 exten = '.csv'
 
 def gettickers():
