@@ -1,7 +1,7 @@
 from datetime import datetime
 import time
 import upbit
-import asyncio
+import asyncio 
 data_path = './datas/'
 
 # tickers = upbit.gettickers('KRW')
@@ -19,12 +19,13 @@ def start():
 async def update_3(data_path,tickers,uptime):
     last_time = uptime.minute
     loop = asyncio.get_event_loop()
+    ticks = 21
     while True:
         uptime = datetime.today()
-        if int(uptime.minute%3)==0 and uptime.minute !=last_time:
+        if int(uptime.minute%10)==1 and uptime.minute !=last_time:
             last_time = uptime.minute
-            upbit.update_data(data_path,tickers,uptime)
-        await asyncio.sleep(30)
+            ticks = upbit.update_data(data_path,tickers,uptime,ticks)
+        await asyncio.sleep(10)
 
 async def tradeTorch():
     loop = asyncio.get_running_loop()

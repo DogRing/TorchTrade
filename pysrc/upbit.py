@@ -1,5 +1,6 @@
 import pandas
 from pandas.core.algorithms import mode
+from pandas.core.arrays.base import ExtensionOpsMixin
 import pyupbit
 import os
 from datetime import datetime
@@ -20,7 +21,7 @@ def update_data(data_path,tickers,now,ticks=21):
     yest_date = yesterday.strftime('%Y-%m-%d')
     
     for i in tickers:
-        file_name = data_path+i+date+exten
+        file_name = data_path+i+'/'+date+exten
         try:
             # bring datas
             interval_datas = pyupbit.get_ohlcv(i,interval = "minute3",count=ticks)
@@ -49,7 +50,7 @@ def update_data(data_path,tickers,now,ticks=21):
             try:
                 # yesterday data
                 yest_data = interval_datas.loc[yest_date] 
-                file_name = data_path+i+yest_date+exten
+                file_name = data_path+i+'/'+yest_date+exten
                 # append
                 bring_last = pandas.read_csv(file_name).iloc[-1][0]
                 need_data = yest_data.loc[bring_last:]
@@ -72,9 +73,13 @@ def setting(data_path,tickers,now):
     yest_date = yesterday.strftime('%Y-%m-%d')
     if not os.path.isdir(data_path):
         os.mkdir(data_path)
+    for i in tickers:
+        folder_name = data_path+i+'/'
+        if not os.path.isdir(folder_name):
+            os.mkdir(folder_name)
 
     for i in tickers:
-        file_name = data_path+i+date+exten
+        file_name = data_path+i+'/'+date+exten
         interval_datas = pyupbit.get_ohlcv(i,interval ="minute3",count = 200)
         today_data = interval_datas.loc[date]
         try:
@@ -87,7 +92,7 @@ def setting(data_path,tickers,now):
             today_data.to_csv(file_name)
         try:
             yest_data = interval_datas.loc[yest_date]
-            file_name = date+i+yest_date+exten
+            file_name = data_path+i+'/'+yest_date+exten
             bring_last = pandas.read_csv(file_name).iloc[-1][0]
             need_data = yest_data.loc[bring_last:]
             if len(need_data)>2:
