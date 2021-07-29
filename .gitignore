@@ -1,3 +1,4 @@
 datas/
 .vscode/
 pysrc/__pycache__/
+app/__pycache__/

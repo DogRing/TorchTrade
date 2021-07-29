@@ -8,23 +8,27 @@ data_path = './datas/'
 tickers = ['KRW-BTC','KRW-XRP','KRW-DOGE','KRW-TFUEL','KRW-ETH','KRW-ETC','KRW-SBD','KRW-STRK']
 
 def start():
-    while True:
-        now = datetime.today()
-        if int(now.minute)%3 == 0:
-            break
-        time.sleep(3)
+    now = datetime.today()
     now = upbit.setting(data_path,tickers,now)
+    # Learning before data
     return now
         
-async def update_3(data_path,tickers,uptime):
-    last_time = uptime.minute
+async def update_d(data_path,tickers,uptime):
+    last_time = uptime
     loop = asyncio.get_event_loop()
-    ticks = 21
+    ticks = 12
+    next =True
     while True:
         uptime = datetime.today()
-        if int(uptime.minute%10)==1 and uptime.minute !=last_time:
-            last_time = uptime.minute
+        if uptime.day!=last_time.day:
+            next=True
+        if next==True and uptime.hour==9 and uptime.minute==5:
+            upbit.update_day(data_path,tickers,uptime)
+            next=False
+        if int(uptime.minute%5)==1 and uptime.minute !=last_time.minute:
+            last_time = uptime
             ticks = upbit.update_data(data_path,tickers,uptime,ticks)
+            
         await asyncio.sleep(10)
 
 async def tradeTorch():
@@ -38,7 +42,7 @@ async def tradeTorch():
         await asyncio.sleep(60)
 
 async def main(now):
-    update = asyncio.create_task(update_3(data_path,tickers,now))
+    update = asyncio.create_task(update_d(data_path,tickers,now))
     aitrade = asyncio.create_task(tradeTorch())
     await update
     await aitrade
