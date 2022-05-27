@@ -1,4 +1,9 @@
 datas/
 .vscode/
 pysrc/__pycache__/
-app/__pycache__/
+
+data/*
+
+*.pt
+*.csv
+*.docx
