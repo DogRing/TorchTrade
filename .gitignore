@@ -1,9 +1,7 @@
-datas/
 .vscode/
-pysrc/__pycache__/
-
+.ipynb_checkpoints/
 data/*
-
+data/
 *.pt
 *.csv
 *.docx
