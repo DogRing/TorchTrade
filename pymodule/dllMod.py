@@ -5,7 +5,7 @@ from numpy.ctypeslib import ndpointer
 import ctypes
 
 def pred_per(x, per, ohlc=True):
-    _dll = ctypes.CDLL('setPred.dll')
+    _dll = ctypes.CDLL('./pymodule/setPred.dll')
     _doublepp = ndpointer(dtype=np.uintp, ndim=1, flags='C')
 
     _pred = _dll.pred_period

@@ -5,3 +5,4 @@ data/
 *.pt
 *.csv
 *.docx
+pymodule/__pycache__/
