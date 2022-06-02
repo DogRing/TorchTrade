@@ -27,7 +27,7 @@ class OHLCDataset(Dataset):
         index = index + self.start        
         
         self.x_data = torch.stack((self.df_T[index - self.seq_length : index],
-                                self.df_10T[index//10 - self.seq_length : index//10],
+                                self.df_10T[index//15 - self.seq_length : index//15],
                                 self.df_H[index//60 - self.seq_length : index//60],
                                 self.df_D[index//1440 - self.seq_length : index//1440]))
 
