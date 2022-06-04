@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 class sCNN(nn.Module):
     def __init__(self, hidden_size, num_layers,seq_length):
@@ -68,8 +67,7 @@ class OLNN(nn.Module):
         x = self.fc3(x)
         return x
 
-import torch.optim as optim
-def fit(epoch, model, data_loader, phase, criterion, optimizer, print_loss=True):
+def fit(epoch, model, data_loader, criterion, optimizer, phase='valid', print_loss=True):
     if phase == 'train':
         model.train()
     if phase == 'valid':
@@ -77,7 +75,7 @@ def fit(epoch, model, data_loader, phase, criterion, optimizer, print_loss=True)
     
     running_loss = 0.0
     for batch_idx, (data, target) in enumerate(data_loader):
-        data, target = data.to(device), target.to(device)
+        data, target = data, target
         
         if phase == 'train':
             optimizer.zero_grad()
