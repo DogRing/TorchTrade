@@ -10,7 +10,7 @@ class OHLCDataset(Dataset):
     def __init__(self, t_df ,pred ,seq_length, ohlc=True):
         super(OHLCDataset, self).__init__()
         self.seq_length = seq_length
-        self.start = seq_length*1440
+        self.start = seq_length*1440+1
         self.ohlc = ohlc
         
         self.df_T = torch.FloatTensor(self.sampling_range(t_df, 'T').values).to(device)
@@ -40,16 +40,22 @@ class OHLCDataset(Dataset):
 
 
     def sampling_range(self, df, T_range):
+        df_sample = pd.DataFrame()
         if self.ohlc:
-            df_sample = pd.DataFrame(df['open'].resample(T_range).first())
+            df_sample['open'] = df['open'].resample(T_range).first()
             df_sample['high'] = df['high'].resample(T_range).max()
             df_sample['volume'] = df['volume'].resample(T_range).sum()
             df_sample['low'] = df['low'].resample(T_range).min()
-            for i in ['open','high','low']:
-                df_sample[i] = df_sample[i] * 100 / df.close
-        
+
         df_sample['close'] = df['close'].resample(T_range).last()
-        df_sample['close'] = df_sample['close'] * 100 / df.close
+        
+        df_c = df_sample['close'].shift()
+        
+        if self.ohlc:
+            for i in ['open','high','low']:
+                df_sample[i] = df_sample[i] / df_c
+
+        df_sample['close'] = df_sample['close'] / df_c
 
         for i in df_sample:
             df_sample[i] = df_sample[i] / df_sample[i].abs().max()
