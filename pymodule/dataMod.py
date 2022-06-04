@@ -53,9 +53,9 @@ class OHLCDataset(Dataset):
         
         if self.ohlc:
             for i in ['open','high','low']:
-                df_sample[i] = df_sample[i] / df_c
+                df_sample[i] = df_sample[i] - df_c / df_c
 
-        df_sample['close'] = df_sample['close'] / df_c
+        df_sample['close'] = df_sample['close'] - df_c / df_c
 
         for i in df_sample:
             df_sample[i] = df_sample[i] / df_sample[i].abs().max()
