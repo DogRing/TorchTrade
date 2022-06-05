@@ -90,5 +90,5 @@ def fit(epoch, model, data_loader, criterion, optimizer, phase='valid', print_lo
     loss = running_loss / len(data_loader.dataset)
     
     if print_loss:
-        print (f'epoch:{epoch}, {phase}loss is {loss}')
+        print (f'epoch:{epoch}, {phase}loss is {format(loss,'.10f')}')
     return loss
