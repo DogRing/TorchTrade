@@ -13,30 +13,27 @@ class OHLCDataset(Dataset):
         self.start = (seq_length+1)*1440
         self.ohlc = ohlc
         
-        self.df_T = torch.FloatTensor(self.sampling_range(t_df, 'T').values).to(device)
-        self.df_10T = torch.FloatTensor(self.sampling_range(t_df, '15T').values).to(device)
-        self.df_H = torch.FloatTensor(self.sampling_range(t_df, '60T').values).to(device)
-        self.df_D = torch.FloatTensor(self.sampling_range(t_df, '1440T').values).to(device)
+        self.df_T = torch.FloatTensor(self.sampling_range(t_df, 'T').T.values).to(device)
+        self.df_10T = torch.FloatTensor(self.sampling_range(t_df, '15T').T.values).to(device)
+        self.df_H = torch.FloatTensor(self.sampling_range(t_df, '60T').T.values).to(device)
+        self.df_D = torch.FloatTensor(self.sampling_range(t_df, '1440T').T.values).to(device)
         
-        y = np.array(pred, dtype=np.float32)
-        y = np.reciprocal(y)
-        y[y == np.inf] = 0
         self.y = torch.FloatTensor(y).to(device)
         
     def __getitem__(self,index):
         index = index + self.start        
         
-        self.x_data = torch.stack((self.df_T[index - self.seq_length : index],
-                                self.df_10T[index//15 - self.seq_length : index//15],
-                                self.df_H[index//60 - self.seq_length : index//60],
-                                self.df_D[index//1440 - self.seq_length : index//1440]))
+        self.x_data = torch.stack((self.df_T[:,index - self.seq_length : index],
+                                self.df_10T[:,index//15 - self.seq_length : index//15],
+                                self.df_H[:,index//60 - self.seq_length : index//60],
+                                self.df_D[:,index//1440 - self.seq_length : index//1440]))
 
         self.y_data = self.y[index]
         
         return self.x_data, self.y_data
         
     def __len__(self):
-        return len(self.df_T) - self.start
+        return len(self.df_T.T) - self.start
 
 
     def sampling_range(self, df, T_range):
