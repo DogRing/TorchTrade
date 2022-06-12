@@ -66,6 +66,46 @@ class OLNN(nn.Module):
         x = self.fc2(x)
         x = self.fc3(x)
         return x
+        
+class OLNNm(nn.Module):
+    def __init__(self, seq_length):
+        super(OLNNm, self).__init__()
+        self.conv1 = nn.Conv1d(in_channels=5, out_channels=8, kernel_size=10)
+        self.conv2 = nn.Conv1d(in_channels=5, out_channels=8, kernel_size=10)
+        self.conv3 = nn.Conv1d(in_channels=5, out_channels=8, kernel_size=10)
+        self.conv4 = nn.Conv1d(in_channels=5, out_channels=8, kernel_size=10)
+        
+        self.conv5 = nn.Conv1d(in_channels=32, out_channels=16, kernel_size=5)
+        self.act1 = nn.GELU()
+        
+        self.conv6 = nn.Conv1d(in_channels=16, out_channels=4,kernel_size=4)
+        self.conv7 = nn.Conv1d(in_channels=4, out_channels=2,kernel_size=2)
+        self.act2 = nn.GELU()
+        
+        self.fc1 = nn.Linear((seq_length-17)*2,64)
+        self.fc2 = nn.Linear(64,8)
+        self.fc3 = nn.Linear(8,1)
+        
+        self.tanh = nn.Tanh()
+        
+    def forward(self, x):
+        x = x.permute((1,0,3,2))
+        
+        x1 = self.conv1(x[0])
+        x2 = self.conv2(x[1])
+        x3 = self.conv3(x[2])
+        x4 = self.conv4(x[3])
+        
+        x = torch.cat((x1,x2,x3,x4),1)
+        x = self.act1(self.conv5(x))
+        x = self.conv6(x)
+        x = self.act2(self.conv7(x))
+    
+        x = self.fc1(x.flatten(1))
+        x = self.fc2(x)
+        x = self.fc3(x)
+        x = self.tanh(x)
+        return x
 
 def fit(epoch, model, data_loader, criterion, optimizer, phase='valid', print_loss=True):
     if phase == 'train':
