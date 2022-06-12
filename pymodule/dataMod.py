@@ -11,7 +11,11 @@ class OHLCDataset(Dataset):
         super(OHLCDataset, self).__init__()
         self.seq_length = seq_length
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.start = (seq_length+1)*1440
+=======
+        self.start = seq_length*1440+1
+>>>>>>> aab912e8dfbda6233c7787d65987be5d9eb13f3b
 =======
         self.start = seq_length*1440+1
 >>>>>>> aab912e8dfbda6233c7787d65987be5d9eb13f3b
@@ -55,9 +59,15 @@ class OHLCDataset(Dataset):
         if self.ohlc:
             for i in ['open','high','low']:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 df_sample[i] = (df_sample[i] - df_c) / df_c
 
         df_sample['close'] = (df_sample['close'] - df_c) / df_c
+=======
+                df_sample[i] = df_sample[i] - df_c / df_c
+
+        df_sample['close'] = df_sample['close'] - df_c / df_c
+>>>>>>> aab912e8dfbda6233c7787d65987be5d9eb13f3b
 =======
                 df_sample[i] = df_sample[i] - df_c / df_c
 
