@@ -10,15 +10,7 @@ class OHLCDataset(Dataset):
     def __init__(self, t_df ,pred ,seq_length, ohlc=True):
         super(OHLCDataset, self).__init__()
         self.seq_length = seq_length
-<<<<<<< HEAD
-<<<<<<< HEAD
         self.start = (seq_length+1)*1440
-=======
-        self.start = seq_length*1440+1
->>>>>>> aab912e8dfbda6233c7787d65987be5d9eb13f3b
-=======
-        self.start = seq_length*1440+1
->>>>>>> aab912e8dfbda6233c7787d65987be5d9eb13f3b
         self.ohlc = ohlc
         
         self.df_T = torch.FloatTensor(self.sampling_range(t_df, 'T').T.values).to(device)
@@ -58,21 +50,9 @@ class OHLCDataset(Dataset):
         
         if self.ohlc:
             for i in ['open','high','low']:
-<<<<<<< HEAD
-<<<<<<< HEAD
-                df_sample[i] = (df_sample[i] - df_c) / df_c
-
-        df_sample['close'] = (df_sample['close'] - df_c) / df_c
-=======
                 df_sample[i] = df_sample[i] - df_c / df_c
 
         df_sample['close'] = df_sample['close'] - df_c / df_c
->>>>>>> aab912e8dfbda6233c7787d65987be5d9eb13f3b
-=======
-                df_sample[i] = df_sample[i] - df_c / df_c
-
-        df_sample['close'] = df_sample['close'] - df_c / df_c
->>>>>>> aab912e8dfbda6233c7787d65987be5d9eb13f3b
 
         for i in df_sample:
             df_sample[i] = df_sample[i] / df_sample[i].abs().max()
