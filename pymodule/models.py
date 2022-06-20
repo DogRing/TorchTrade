@@ -120,7 +120,7 @@ def fit(epoch, model, data_loader, criterion, optimizer, phase='valid', print_lo
         if phase == 'train':
             optimizer.zero_grad()
         output = model(data)
-        loss = criterion(output.permute(1,0), target.permute(1,0))
+        loss = criterion(output, target)
         running_loss += loss.item()
         
         if phase == 'train':
@@ -130,5 +130,5 @@ def fit(epoch, model, data_loader, criterion, optimizer, phase='valid', print_lo
     loss = running_loss / len(data_loader.dataset)
     
     if print_loss:
-        print (f'epoch:{epoch}, {phase}loss is {loss}')
+        print (f'epoch:{epoch+1}, {phase}loss is {loss}')
     return loss
