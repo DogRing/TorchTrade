@@ -58,3 +58,78 @@ class OHLCDataset(Dataset):
             df_sample[i] = df_sample[i] / df_sample[i].abs().max()
         
         return df_sample
+
+class S2SDataset(Dataset):
+    def __init__(self, df, in_length, out_length, interv = 'T', ohlc=['close']):
+        super(S2SDataset, self).__init__()
+        self.inl = in_length
+        self.outl = out_length
+        self.ohlc = ohlc
+        
+        self.df = torch.FloatTensor(self.sampling_range(df,interv).T.values).to(device)
+        self.df_len = len(self.df.T) - self.inl - self.outl
+        
+    def __getitem__(self, index):
+        x_data = self.df[:,index:index+self.inl]
+        y_data = self.df[:,index+self.inl:index+self.inl+self.outl]
+        return x_data, y_data
+    
+    def __len__(self):
+        return self.df_len
+    
+    def sampling_range(self, df, T_range):
+        df_sample = pd.DataFrame()
+        for i in self.ohlc:
+            df_sampler = df[i].resample(T_range)
+            if i=='open'   : df_sample[i] = df_sampler.first()
+            elif i=='high' : df_sample[i] = df_sampler.max()
+            elif i=='low'  : df_sample[i] = df_sampler.min()
+            elif i=='close': df_sample[i] = df_sampler.last()
+        
+        # normalize
+        df_c = df_sample['close'].shift()
+        
+        for i in df_sample:
+            df_sample[i] = (df_sample[i] - df_c) / df_c
+            df_sample[i] = (df_sample[i] - df_sample[i].min()) / (df_sample[i].max() - df_sample[i].min())
+            
+        return df_sample[1:]
+
+class S2PDataset(Dataset):
+    def __init__(self, df, in_length, y, interv = 'T', ohlc=['close']):
+        super(S2PDataset, self).__init__()
+        self.inl = in_length
+        self.ohlc = ohlc
+        
+        self.df = torch.FloatTensor(self.sampling_range(df,interv).T.values).to(device)
+        self.df_len = len(self.df.T) - self.inl
+
+        self.y = (y- y.min()) / (y.max()-y.min())
+        self.y = torch.FloatTensor(y).to(device)
+        
+        
+    def __getitem__(self, index):
+        x_data = self.df[:,index:index+self.inl]
+        y_data = self.y[index+self.inl]
+        return x_data, y_data
+    
+    def __len__(self):
+        return self.df_len
+    
+    def sampling_range(self, df, T_range):
+        df_sample = pd.DataFrame()
+        for i in self.ohlc:
+            df_sampler = df[i].resample(T_range)
+            if i=='open'   : df_sample[i] = df_sampler.first()
+            elif i=='high' : df_sample[i] = df_sampler.max()
+            elif i=='low'  : df_sample[i] = df_sampler.min()
+            elif i=='close': df_sample[i] = df_sampler.last()
+        
+        # normalize
+        df_c = df_sample['close'].shift()
+        
+        for i in df_sample:
+            df_sample[i] = (df_sample[i] - df_c) / df_c
+            df_sample[i] = (df_sample[i] - df_sample[i].min()) / (df_sample[i].max() - df_sample[i].min())
+            
+        return df_sample[1:]
