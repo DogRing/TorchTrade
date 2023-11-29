@@ -1,10 +1,9 @@
-.vscode/
-.ipynb_checkpoints/
-data/*
-data/
+__pycache__/
+raw_data/
+
 *.pt
 *.csv
 *.docx
 *.pkl
 *.onnx
-pymodule/__pycache__/
+local_values.py
