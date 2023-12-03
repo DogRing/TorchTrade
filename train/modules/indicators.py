@@ -33,7 +33,7 @@ def BB(df, window):
     lower = middle - 2 * std
     bw = (upper - lower) / middle
     perb = (df['close'] - lower) / (upper - lower)
-    return (bw, perb), (upper, lower)
+    return (bw, perb), (upper, middle, lower)
 
 # 모멘텀
 def Mmt(df, window):
