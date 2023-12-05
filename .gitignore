@@ -1,7 +1,8 @@
 __pycache__/
 .ipynb_checkpoints/
 
-raw_data/
+train/raw_data/
+train/data/
 
 *.pt
 *.csv
