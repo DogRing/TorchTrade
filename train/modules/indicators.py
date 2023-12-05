@@ -31,8 +31,8 @@ def BB(df, window):
     std = df['close'].rolling(window).std(ddof=0)
     upper = middle + 2 * std
     lower = middle - 2 * std
-    bw = (upper - lower) / middle
-    perb = (df['close'] - lower) / (upper - lower)
+    bw = 4*std / middle
+    perb = (df['close'] - lower) / 4*std
     return (bw, perb), (upper, middle, lower)
 
 # 모멘텀
