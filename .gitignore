@@ -3,10 +3,13 @@ __pycache__/
 
 train/raw_data/
 train/data/
+train/modules/object/
+
+local_values.py
 
 *.pt
 *.csv
-*.docx
 *.pkl
 *.onnx
-local_values.py
+
+*.docx
