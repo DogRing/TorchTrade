@@ -3,6 +3,7 @@ __pycache__/
 
 train/raw_data/
 train/data/
+train/target/
 train/modules/object/
 
 local_values.py
