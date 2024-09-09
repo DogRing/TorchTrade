@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: collect-weekly
+  namespace: ttrade
+spec:
+  schedule: "0 0 * * 0"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: update-csv
+            image: dogring/tt-extract:1.1
+            imagePullPolicy: IfNotPresent
+            resources:
+              requests:
+                memory: "64Mi"
+                cpu: "25m"
+              limits:
+                memory: "128Mi"
+                cpu: "75m"
+            volumeMounts:
+              - name: smb
+                mountPath: "/source/local_values.py"
+                subPath: "ttrade/local_values.py"
+                readOnly: true
+              - name: smb
+                mountPath: "/data/raw"
+                subPath: "ttrade/raw"
+          volumes:
+            - name: smb
+              persistentVolumeClaim:
+                claimName: pvc-smb
+          restartPolicy: OnFailure
