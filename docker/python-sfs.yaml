@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: test-pod
+  namespace: test
+spec:
+  selector:
+    matchLabels:
+      app: python-test
+  replicas: 3
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: OrderedReady
+  template:
+    metadata:
+      labels:
+        app: python-test
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                      - python-test
+                topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: kubernetes-zookeeper
+        imagePullPolicy: IfNotPresent
+        image: python:3.9-slim
+        command:
+          - "sleep"
+          - "604800"
+        volumeMounts:
+          - name: smb
+            mountPath: "/source/local_values.py"
+            subPath: "ttrade/local_values.py"
+            readOnly: true
+          - name: smb
+            mountPath: "/data/raw"
+            subPath: "ttrade/raw"
+          - name: smb
+            mountPath: "/data/data"
+            subPath: "ttrade/data"
+      volumes:
+        - name: smb
+          persistentVolumeClaim:
+            claimName: pvc-smb
