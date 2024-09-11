@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka-btc
+  namespace: ttrade
+spec:
+  selector:
+    matchLabels:
+      app: kafka-BTC
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: OrderedReady
+  template:
+    metadata:
+      labels:
+        app: kafka-BTC
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: kafka-BTC
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: kafka-bit
+        image: dogring/tt-kafka:1.4
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "50m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+        env:
+        - name: TOPIC
+          value: KRW-BTC
+        - name: TICK
+          value: KRW-BTC
+        - name: INTERVAL
+          value: 15
+        - name: ZK_SERVICE
+          value: zk-cs.zookeeper.svc:2181
+        - name: KAFKA_SERVICE
+          value: my-cluster-kafka-bootstrap.kafka.svc:9092
+      restartPolicy: Always
