@@ -40,7 +40,7 @@ spec:
         - name: TICK
           value: KRW-BTC
         - name: INTERVAL
-          value: 15
+          value: '15'
         - name: ZK_SERVICE
           value: zk-cs.zookeeper.svc:2181
         - name: KAFKA_SERVICE
