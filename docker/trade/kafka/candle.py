@@ -28,7 +28,9 @@ def candle_interval():
     p=mp.Process(name="Producer",target=update_data,args=(q,tick,),daemon=True)
     p.start()
     interval_len=int(60/interval)
-    interval_data=[[0]*5]*interval_len
+    while q.empty(): continue 
+    price,_,_=q.get()
+    interval_data=[[price]*4+[0]]*interval_len
     now=time.time()
     now_interval=now-now%interval+interval
     try:
