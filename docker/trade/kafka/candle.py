@@ -23,7 +23,7 @@ def kf_message(topic,message):
         print(f"Failed to send message: {str(e)}")
 
 def candle_interval():
-    print(f'Working pod Start at {time.time()}')
+    print('Working pod')
     q=mp.Queue()
     p=mp.Process(name="Producer",target=update_data,args=(q,tick,),daemon=True)
     p.start()
@@ -32,6 +32,8 @@ def candle_interval():
     price,_,_=q.get()
     interval_data=[[price]*4+[0]]*interval_len
     now=time.time()
+    start=time.localtime(now)
+    print(f'Start at {start.tm_year}-{start.tm_mon}-{start.tm_mday} {start.tm_hour+9}:{start.tm_min}:{start.tm_sec} KST')
     now_interval=now-now%interval+interval
     try:
         while True:

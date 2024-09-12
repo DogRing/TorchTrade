@@ -25,15 +25,15 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
       - name: kafka-bit
-        image: dogring/tt-kafka:1.4
-        imagePullPolicy: Always
+        image: dogring/tt-kafka:1.5
+        imagePullPolicy: IfNotPresent
         resources:
           requests:
             memory: "32Mi"
-            cpu: "50m"
+            cpu: "25m"
           limits:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
         env:
         - name: TOPIC
           value: KRW-BTC
