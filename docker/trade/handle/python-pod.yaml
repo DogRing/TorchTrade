@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: trade-btc
+  namespace: ttrade
+  labels:
+    app: trade-btc
+spec:
+  containers:
+  - name: trade-bit
+    image: dogring/tt-trade:1.0
+    resources:
+      requests:
+        memory: "32Mi"
+        cpu: "25m"
+    env:
+    - name: ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: upbit-key
+          key: accesskey
+    - name: SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: upbit-key
+          key: secretkey
+    imagePullPolicy: IfNotPresent
