@@ -12,5 +12,5 @@ local_values.py
 *.csv
 *.pkl
 *.onnx
-
 *.docx
+*-secret.yaml
