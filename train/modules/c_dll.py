@@ -35,13 +35,12 @@ with open(file_c,'w') as c:
                     }
                 }
             }
-            
             """)
     
 os.system('gcc -c '+file_c+' -o '+file_o)
 os.system('gcc -shared '+file_o+' -o '+file_so)
 
-def pred_close(period, x):
+def pred_period(period, x):
     import numpy as np
 
     _dll=ctypes.cdll.LoadLibrary(file_so)
