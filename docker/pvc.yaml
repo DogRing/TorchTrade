@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-smb
+  namespace: ttrade
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: "smb"
+  resources:
+    requests:
+      storage: 10Gi
