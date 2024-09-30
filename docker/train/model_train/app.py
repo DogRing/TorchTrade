@@ -27,6 +27,7 @@ criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 start=time.time()
+print(f'Start At {time.strftime("%m-%d %H:%M:%S",time.localtime(start))}')
 for epoch in range(num_epochs):
     model.train()
     train_loss = 0.0
@@ -52,3 +53,5 @@ for epoch in range(num_epochs):
     avg_test_loss = test_loss / len(test_loader)
     print(f'Epoch [{epoch+1}/{num_epochs}] {((time.time()-start)/60):.2f}M, Train Loss: {avg_train_loss:.4f}, Test Loss: {avg_test_loss:.4f}')
     torch.save(model.state_dict(),param_path)
+end=time.time()
+print(f'End At {time.strftime("%m-%d %H:%M:%S",time.localtime(end))}, Mean per epoch {((end-start)/60/num_epochs):.2f}')
