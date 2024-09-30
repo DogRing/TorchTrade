@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: train-gpu
+  namespace: ttrade
+spec:
+  runtimeClassName: nvidia
+  nodeSelector:
+    gpu: nvidia
+  containers:
+  - name: cuda-container
+    image: dogring/tt-train:1.2
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: "2"
+        memory: "4Gi"
+        nvidia.com/gpu: "1"
+    env:
+    - name: EPOCHES
+      value: "10"
+    - name: RESULT_PATH
+      value: "/model/results/SegRNN.pt"
+    volumeMounts:
+      - name: datadir
+        mountPath: "/data/data"
+        subPath: "data"
+        readOnly: true
+      - name: smb
+        mountPath: "/source/local_values.py"
+        subPath: "ttrade/local_values.py"
+        readOnly: true
+      - name: smb
+        mountPath: "/model"
+        subPath: "ttrade/model/SegRNN"
+        readOnly: true
+      - name: config
+        mountPath: "/etc/config"
+        readOnly: true
+  volumes:
+  - name: datadir
+    hostPath:
+      path: /DATA1/ttrade
+      type: DirectoryOrCreate
+  - name: smb
+    persistentVolumeClaim:
+      claimName: pvc-smb
+  - name: config
+    configMap:
+      name: train-config
+  restartPolicy: Never
+  
