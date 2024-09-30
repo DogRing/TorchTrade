@@ -20,7 +20,7 @@ spec:
     - name: EPOCHES
       value: "10"
     - name: RESULT_PATH
-      value: "/model/results/SegRNN.pt"
+      value: "./results/SegRNN.pth"
     volumeMounts:
       - name: datadir
         mountPath: "/data/data"
@@ -34,6 +34,9 @@ spec:
         mountPath: "/model"
         subPath: "ttrade/model/SegRNN"
         readOnly: true
+      - name: smb
+        mountPath: "/source/results"
+        subPath: "ttrade/model/SegRNN/results"
       - name: config
         mountPath: "/etc/config"
         readOnly: true
