@@ -9,7 +9,7 @@ spec:
     gpu: nvidia
   containers:
   - name: cuda-container
-    image: dogring/tt-train:1.2
+    image: dogring/tt-train:1.3
     imagePullPolicy: IfNotPresent
     resources:
       limits:
@@ -20,7 +20,7 @@ spec:
     - name: EPOCHES
       value: "10"
     - name: RESULT_PATH
-      value: "./results/SegRNN.pth"
+      value: "/source/results/SegRNN.pth"
     volumeMounts:
       - name: datadir
         mountPath: "/data/data"

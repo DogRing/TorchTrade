@@ -21,7 +21,7 @@ with open(config_file,'r') as f:
 configs = Configs(config)
 model = Model(configs).to(device)
 if os.path.exists(param_path)==True:
-    model.load_state_dict(torch.load(path))
+    model.load_state_dict(torch.load(param_path,weights_only=True))
 
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -31,10 +31,11 @@ print(f'Start At {time.strftime("%m-%d %H:%M:%S",time.localtime(start))}')
 for epoch in range(num_epochs):
     model.train()
     train_loss = 0.0
-    for batch_idx, (input_tensor, target_tensor) in enumerate(train_loader):
+    for input_tensor, target_tensor in train_loader:
         outputs = model(input_tensor)
         if isinstance(outputs, (list, tuple)):
             outputs = outputs[0]
+        outputs = outputs[:, -target_tensor.shape[1]:, -target_tensor.shape[2]:]
         loss = criterion(outputs, target_tensor)
         optimizer.zero_grad()
         loss.backward()
@@ -48,6 +49,7 @@ for epoch in range(num_epochs):
             outputs = model(input_tensor)
             if isinstance(outputs, (list, tuple)):
                 outputs = outputs[0]
+            outputs = outputs[:, -target_tensor.shape[1]:, -target_tensor.shape[2]:]
             loss = criterion(outputs, target_tensor)
             test_loss += loss.item()
     avg_test_loss = test_loss / len(test_loader)
