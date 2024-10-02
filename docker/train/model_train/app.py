@@ -19,6 +19,7 @@ print(device)
 with open(config_file,'r') as f:
     config = json.load(f)
 configs = Configs(config)
+channel_id=config.get('channel_id')
 model = Model(configs).to(device)
 if os.path.exists(param_path)==True:
     model.load_state_dict(torch.load(param_path,weights_only=True))
@@ -35,7 +36,7 @@ for epoch in range(num_epochs):
         outputs = model(input_tensor)
         if isinstance(outputs, (list, tuple)):
             outputs = outputs[0]
-        outputs = outputs[:, -target_tensor.shape[1]:, -target_tensor.shape[2]:]
+        outputs = outputs[:,:,channel_id:channel_id+1]
         loss = criterion(outputs, target_tensor)
         optimizer.zero_grad()
         loss.backward()
@@ -49,7 +50,7 @@ for epoch in range(num_epochs):
             outputs = model(input_tensor)
             if isinstance(outputs, (list, tuple)):
                 outputs = outputs[0]
-            outputs = outputs[:, -target_tensor.shape[1]:, -target_tensor.shape[2]:]
+            outputs = outputs[:,:,channel_id:channel_id+1]
             loss = criterion(outputs, target_tensor)
             test_loss += loss.item()
     avg_test_loss = test_loss / len(test_loader)
