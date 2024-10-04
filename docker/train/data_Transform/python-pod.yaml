@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: test-pod1
-  namespace: test
+  name: data-transform
+  namespace: ttrade
   labels:
-    app: test
+    app: data-transform
 spec:
   nodeSelector:
     gpu: nvidia
   containers:
-  - name: test-py
-    image: dogring/tt-transform
+  - name: data-transform
+    image: dogring/tt-transform:1.1
     imagePullPolicy: IfNotPresent
     volumeMounts:
       - name: smb
@@ -24,6 +24,9 @@ spec:
       - name: datadir
         mountPath: "/data/data"
         subPath: "data"
+      - name: config
+        mountPath: "/etc/config"
+        readOnly: true
   volumes:
     - name: datadir
       hostPath:
@@ -32,3 +35,6 @@ spec:
     - name: smb
       persistentVolumeClaim:
         claimName: pvc-smb
+    - name: config
+      configMap:
+        name: data-config

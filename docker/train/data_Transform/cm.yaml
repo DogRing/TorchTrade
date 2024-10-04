@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: data-config
+  namespace: ttrade
+data:
+  transform.json: |
+    {
+      "EMA": [5,30,60],
+      "BB": [20],
+      "dis": [20],
+      "Mmt": [20],
+      "RSI": [14],
+      "MACD": true
+    }
