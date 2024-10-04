@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: kafka-BTC
-  replicas: 1
+  replicas: 3
   updateStrategy:
     type: RollingUpdate
   podManagementPolicy: OrderedReady
@@ -16,6 +16,10 @@ spec:
       labels:
         app: kafka-BTC
     spec:
+      tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
