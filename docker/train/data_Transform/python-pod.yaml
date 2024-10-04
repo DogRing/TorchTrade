@@ -12,6 +12,13 @@ spec:
   - name: data-transform
     image: dogring/tt-transform:1.1
     imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "1.5Gi"
+      limits: 
+        cpu: "1"
+        memory: "2Gi"
     volumeMounts:
       - name: smb
         mountPath: "/source/local_values.py"
