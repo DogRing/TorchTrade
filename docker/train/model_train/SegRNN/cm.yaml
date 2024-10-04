@@ -6,21 +6,21 @@ metadata:
 data:
   model.json: |
     {
-      "seq_len": 60,
-      "pred_len": 10,
+      "seq_len": 180,
+      "pred_len": 8,
       "enc_in": 10,
-      "d_model": 64,
+      "d_model": 96,
       "dropout": 0.2,
       "rnn_type": "lstm",
       "dec_way": "pmf",
-      "seg_len": 10,
+      "seg_len": 4,
       "channel_id": 1,
       "revin": true
     }
   dataset.json: |
     {
-      "seq_len": 60,
-      "pred_len": 10,
+      "seq_len": 180,
+      "pred_len": 8,
       "tickers": ["KRW-BTC","KRW-ETH","KRW-XRP","KRW-ETC"],
       "features": ["close", "EMA5", "EMA30", "EMA60", "value", "BW", "dis", "Mmt", "RSI", "MACD"],
       "target": ["EMA5"]
