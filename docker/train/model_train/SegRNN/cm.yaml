@@ -21,7 +21,7 @@ data:
     {
       "seq_len": 180,
       "pred_len": 8,
-      "tickers": ["KRW-BTC","KRW-ETH","KRW-XRP","KRW-ETC"],
-      "features": ["close", "EMA5", "EMA30", "EMA60", "value", "BW", "dis", "Mmt", "RSI", "MACD"],
+      "tickers": ["KRW-BTC","KRW-ETH"],
+      "features": ["close", "EMA5", "EMA30", "EMA60", "value", "BW20", "dis20", "Mmt20", "RSI14", "MACD"],
       "target": ["EMA5"]
     }
