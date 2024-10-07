@@ -55,7 +55,7 @@ def candle_interval():
             low=min(row[1] for row in interval_data)
             high=max(row[2] for row in interval_data)
             volume=sum(row[4] for row in interval_data)
-            kf_message(topic,message={'tick':tick,'timestamp':now_interval,'open':open,'low':low,'high':high,'close':close,'volume':volume})
+            kf_message(topic,message={'tick':tick,'timestamp':now_interval,'open':open,'low':low,'high':high,'close':close,'value':volume})
             now_interval+=interval
             left_time=now_interval-time.time()
             if left_time<0: print("interval is too short")
