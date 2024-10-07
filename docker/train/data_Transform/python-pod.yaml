@@ -10,7 +10,7 @@ spec:
     gpu: nvidia
   containers:
   - name: data-transform
-    image: dogring/tt-transform:1.1
+    image: dogring/tt-transform:1.2
     imagePullPolicy: IfNotPresent
     resources:
       requests:
