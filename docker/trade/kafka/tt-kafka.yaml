@@ -40,7 +40,7 @@ spec:
             cpu: "50m"
         env:
         - name: TOPIC
-          value: KRW-BTC
+          value: krw-btc
         - name: TICK
           value: KRW-BTC
         - name: INTERVAL
