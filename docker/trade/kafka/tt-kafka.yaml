@@ -29,7 +29,7 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
       - name: kafka-bit
-        image: dogring/tt-kafka:1.5
+        image: dogring/tt-kafka:1.6
         imagePullPolicy: IfNotPresent
         resources:
           requests:
