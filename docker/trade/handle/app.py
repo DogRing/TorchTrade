@@ -1,14 +1,20 @@
-from kafka import KafkaConsumer
+from data_transform import data_transform
 from ttrade import ttrade
+from kafka import KafkaConsumer
+import pandas as pd
 import numpy as np
 import json
 import time
 import os
 
 topic=os.environ['TOPIC']
+column_names=['timestamp','open','high','low','close','value']
 interval=int(60/int(os.environ.get('INTERVAL','15')))
 data_count=int(os.environ.get('DATA_LENGTH','64'))*interval
 kafka_host=os.environ.get('KAFKA_SERVICE','my-cluster-kafka-bootstrap.kafka.svc:9092')
+config_file=os.environ.get('DATA_CONFIG','/etc/config/transform.json')
+with open(config_file,'r') as f:
+    config=json.load(f)
 
 consumer=KafkaConsumer(
     topic,
@@ -21,30 +27,22 @@ consumer=KafkaConsumer(
 )
 
 try:
-    x_data=np.zeros((6,data_count))
-    data_index=np.where(np.arange(data_count) % 4 == 3)[0]
+    num_features=len(column_names)
+    x_data=np.zeros((data_count,num_features),dtype=np.float64)
+    data_index=np.where(np.arange(data_count) % interval == (interval-1))[0]
     while data_count > 0:
         for message in consumer:
-            x_data=np.roll(x_data,-1,axis=1)
-            x_data[0][-1]=message.value['timestamp']
-            x_data[1][-1]=message.value['open']
-            x_data[2][-1]=message.value['high']
-            x_data[3][-1]=message.value['low']
-            x_data[4][-1]=message.value['close']
-            x_data[5][-1]=message.value['volume']
+            x_data=np.roll(x_data,-1,axis=0)
+            for i in range(num_features):
+                x_data[-1][i]=message.value[column_names[i]]
             data_count-=1
-            if data_count == 0:
-                break
     print(f"timestamp: {time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(message.value['timestamp']))}\ntick: {message.value['tick']}\noffset: {message.offset}\n")
     while True:
         for message in consumer:
-            x_data=np.roll(x_data,-1,axis=1)
-            x_data[0][-1]=message.value['timestamp']
-            x_data[1][-1]=message.value['open']
-            x_data[2][-1]=message.value['high']
-            x_data[3][-1]=message.value['low']
-            x_data[4][-1]=message.value['close']
-            x_data[5][-1]=message.value['volume']
-            ttrade(x_data[:,data_index])
+            x_data=np.roll(x_data,-1,axis=0)
+            for i in range(num_features):
+                x_data[-1][i]=message.value[column_names[i]]
+            df=data_transform(pd.DataFrame(x_data[data_index,:],columns=column_names),config,tick=topic,save=False)
+            ttrade(df)
 finally:
     consumer.close()
