@@ -3,5 +3,4 @@ ENV PYTHONUNBUFFERED=1
 COPY ./requirements.txt /requirements.txt
 RUN pip --no-cache-dir install -r /requirements.txt
 COPY app.py /source/app.py
-COPY dataset.py /source/dataset.py
 CMD ["python", "/source/app.py"]

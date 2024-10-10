@@ -140,5 +140,7 @@ class Model(nn.Module):
             y = self.revinLayer(y.permute(0, 2, 1), 'denorm')
         else:
             y = y.permute(0, 2, 1) + seq_last
-
+        
+        if self.channel_id:
+            return y[:,:,self.channel_id:self.channel_id+1]
         return y

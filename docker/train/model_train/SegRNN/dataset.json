@@ -1,0 +1,7 @@
+{
+    "seq_len": 180,
+    "pred_len": 8,
+    "tickers": ["KRW-BTC"],
+    "features": ["close", "EMA5", "EMA30", "EMA60", "value", "BW20", "dis20", "Mmt20", "RSI14", "MACD"],
+    "target": ["EMA5"]
+}

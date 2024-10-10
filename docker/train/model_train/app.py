@@ -11,7 +11,7 @@ from Model import Model,Configs
 
 num_epochs = int(os.environ.get('EPOCHES','50'))
 param_path = os.environ.get('RESULT_PATH','/model/results/result.pt')
-config_file = os.environ.get('MODEL_CONFIG','/etc/config/model.json')
+config_file = os.environ.get('MODEL_CONFIG','/model/model.json')
 
 device=torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(device)
@@ -19,7 +19,6 @@ print(device)
 with open(config_file,'r') as f:
     config = json.load(f)
 configs = Configs(config)
-channel_id=config.get('channel_id')
 model = Model(configs).to(device)
 if os.path.exists(param_path)==True:
     model.load_state_dict(torch.load(param_path,weights_only=True))
@@ -33,10 +32,9 @@ for epoch in range(num_epochs):
     model.train()
     train_loss = 0.0
     for input_tensor, target_tensor in train_loader:
+        input_tensor = input_tensor.to(device)
+        target_tensor = target_tensor.to(device)
         outputs = model(input_tensor)
-        if isinstance(outputs, (list, tuple)):
-            outputs = outputs[0]
-        outputs = outputs[:,:,channel_id:channel_id+1]
         loss = criterion(outputs, target_tensor)
         optimizer.zero_grad()
         loss.backward()
@@ -47,10 +45,9 @@ for epoch in range(num_epochs):
     test_loss = 0.0
     with torch.no_grad():
         for input_tensor, target_tensor in test_loader:
+            input_tensor = input_tensor.to(device)
+            target_tensor = target_tensor.to(device)
             outputs = model(input_tensor)
-            if isinstance(outputs, (list, tuple)):
-                outputs = outputs[0]
-            outputs = outputs[:,:,channel_id:channel_id+1]
             loss = criterion(outputs, target_tensor)
             test_loss += loss.item()
     avg_test_loss = test_loss / len(test_loader)
