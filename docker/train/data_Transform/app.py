@@ -5,6 +5,7 @@ import json
 import os
 
 config_file=os.environ.get('DATA_CONFIG','/etc/config/transform.json')
+scaler_path = os.environ.get('SCALER_PATH','/data/data/scaler/')
 with open(config_file,'r') as f:
     config=json.load(f)
 
@@ -13,6 +14,6 @@ for tick in tickers:
     df=df.resample(rule='min').first()
     df[['volume','value']]=df[['volume','value']].fillna(0)
     df=df.interpolate()
-    df=data_transform(df,config,tick)
+    df=data_transform(df,config,path=scaler_path,file_name=tick,save=True)
     print(f"file {tick} length : {len(df)}")
     df.to_csv(data_folder+tick+'.csv')
