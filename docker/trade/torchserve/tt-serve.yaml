@@ -43,13 +43,13 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
       - name: serve-model
-        image: dogring/tt-serve:1.0
+        image: dogring/tt-serve:1.1
         imagePullPolicy: Always
         env:
         - name: MODEL_NAME
           value: "seg_rnn"
         - name: EXTRA_FILES
-          value: "config.json,param.pth,Model.py,RevIN.py"
+          value: "model.json,param.pth,Model.py,RevIN.py"
         ports:
         - containerPort: 8080
           name: inference
@@ -57,11 +57,11 @@ spec:
           name: management
         resources:
           requests:
-            cpu: "500m"
-            memory: "1Gi"
+            cpu: "25m"
+            memory: "64Mi"
           limits:
-            cpu: "1"
-            memory: "2Gi"
+            cpu: "100m"
+            memory: "256Mi"
         volumeMounts:
         - name: smb
           mountPath: "/home/model-server/param.pth"
@@ -75,19 +75,13 @@ spec:
           mountPath: "/home/model-server/RevIN.py"
           subPath: "ttrade/model/SegRNN/RevIN.py"
           readOnly: true
-        - name: config
-          mountPath: "/home/model-server/config.json"
-          subPath: "config.json"
+        - name: smb
+          mountPath: "/home/model-server/model.json"
+          subPath: "ttrade/model/SegRNN/model.json"
           readOnly: true
       volumes:
       - name: smb
         persistentVolumeClaim:
           claimName: pvc-smb
-      - name: config
-        configMap:
-          name: train-config
-          items:
-          - key: model.json
-            path: config.json
       restartPolicy: Always
       

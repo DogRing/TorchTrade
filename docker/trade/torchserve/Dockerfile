@@ -2,7 +2,7 @@ FROM pytorch/torchserve:latest
 
 ENV MODEL_NAME=mymodel
 ENV MODEL_VERSION=1.0
-ENV EXTRA_FILES=config.json,param.pth
+ENV EXTRA_FILES=model.json,param.pth
 
 COPY app.py /home/model-server/
 WORKDIR /home/model-server

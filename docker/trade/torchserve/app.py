@@ -14,7 +14,7 @@ class ModelHandler(BaseHandler):
         properties = context.system_properties
         model_dir = properties.get("model_dir")
 
-        with open(f"{model_dir}/config.json",'r') as f:
+        with open(f"{model_dir}/model.json",'r') as f:
             self.config= json.load(f)
         self.model = Model(Configs(self.config))
         state_dict = torch.load(f"{model_dir}/param.pth",map_location=torch.device('cpu'))
