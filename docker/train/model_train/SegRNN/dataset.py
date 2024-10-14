@@ -39,4 +39,4 @@ for tick in config.get('tickers'):
 concat_train_dataset = ConcatDataset(train_datasets)
 concat_test_dataset = ConcatDataset(test_datasets)
 train_loader = DataLoader(concat_train_dataset, batch_size=64, shuffle=True, pin_memory=True, num_workers=2)
-test_loader = DataLoader(concat_train_dataset, batch_size=32, shuffle=False, pin_memory=True, num_workers=2)
+test_loader = DataLoader(concat_test_dataset, batch_size=32, shuffle=False, pin_memory=True, num_workers=2)
