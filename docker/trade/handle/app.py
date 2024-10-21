@@ -8,13 +8,19 @@ import time
 import os
 
 topic=os.environ['TOPIC']
+tick=os.environ['TICK']
 column_names=['timestamp','open','high','low','close','value']
 interval=int(60/int(os.environ.get('INTERVAL','15')))
-data_count=int(os.environ.get('DATA_LENGTH','64'))*interval
+data_count=int(os.environ.get('DATA_LENGTH','200'))*interval
+scaler_path = os.environ.get('SCALER_PATH','/data/data/scaler/')
 kafka_host=os.environ.get('KAFKA_SERVICE','my-cluster-kafka-bootstrap.kafka.svc:9092')
-config_file=os.environ.get('DATA_CONFIG','/etc/config/transform.json')
+tf_config_file=os.environ.get('DATA_CONFIG','/etc/config/transform.json')
+config_file=os.environ.get('trade_config','/etc/config/trade.json')
+with open(tf_config_file,'r') as f:
+    tf_config=json.load(f)
 with open(config_file,'r') as f:
     config=json.load(f)
+input_count=int(os.environ.get('INPUT_LENGTH',config['seq_len']))
 
 consumer=KafkaConsumer(
     topic,
@@ -42,7 +48,7 @@ try:
             x_data=np.roll(x_data,-1,axis=0)
             for i in range(num_features):
                 x_data[-1][i]=message.value[column_names[i]]
-            df=data_transform(pd.DataFrame(x_data[data_index,:],columns=column_names),config,tick=topic,save=False)
-            ttrade(df)
+            df=data_transform(pd.DataFrame(x_data[data_index,:],columns=column_names),tf_config,path=scaler_path,file_name=tick,save=False)
+            ttrade(df[config['features']][-input_count:].values.reshape(1,-1,len(config['features'])))
 finally:
     consumer.close()

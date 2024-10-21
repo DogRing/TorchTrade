@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trade-config
+  namespace: ttrade
+data:
+  trade.json: |
+    {
+      "seq_len": 180,
+      "features": ["close", "EMA5", "EMA30", "EMA60", "value", "BW20", "dis20", "Mmt20", "RSI14", "MACD"]
+    }
+  transform.json: |
+    {
+      "EMA": [5,30,60],
+      "BB": [20],
+      "dis": [20],
+      "Mmt": [20],
+      "RSI": [14],
+      "MACD": true
+    }

@@ -6,14 +6,25 @@ metadata:
   labels:
     app: trade-btc
 spec:
+  tolerations:
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
   containers:
   - name: trade-bit
     image: dogring/tt-trade:1.0
+    imagePullPolicy: IfNotPresent
     resources:
       requests:
         memory: "32Mi"
         cpu: "25m"
     env:
+    - name: MODEL_URL
+      value: http://serve-segrnn.ttrade.svc.cluster.local:8080/predictions/seg_rnn
+    - name: TOPIC
+      value: krw-btc
+    - name: TICK
+      value: KRW-BTC
     - name: ACCESS_KEY
       valueFrom:
         secretKeyRef:
@@ -24,4 +35,18 @@ spec:
         secretKeyRef:
           name: upbit-key
           key: secretkey
-    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: smb
+      mountPath: "/data/data/scaler"
+      subPath: "ttrade/data/scaler"
+      readOnly: true
+    - name: config
+      mountPath: "/etc/config"
+      readOnly: true
+  volumes:
+  - name: smb
+    persistentVolumeClaim:
+      claimName: pvc-smb
+  - name: config
+    configMap:
+      name: trade-config
