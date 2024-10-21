@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: torchserve-config
+  namespace: ttrade
+data:
+  config.properties: |
+    inference_address=http://0.0.0.0:8080
+    management_address=http://0.0.0.0:8081
+    metrics_address=http://0.0.0.0:8082
+    model_store=/home/model-server/model-store
+    disable_token_authorization=true
+    default_workers_per_model=2
+    enable_envvars_config=true
+    install_py_dep_per_model=true
+    default_response_timeout=20
+    unregister_model_timeout=20
+    

@@ -13,6 +13,9 @@ spec:
     - port: 8081
       targetPort: 8081
       name: management
+    - port: 8082
+      targetPort: 8082
+      name: metric
   type: ClusterIP
 ---
 apiVersion: apps/v1
@@ -43,45 +46,59 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
       - name: serve-model
-        image: dogring/tt-serve:1.1
+        image: dogring/tt-serve:1.2
         imagePullPolicy: Always
         env:
-        - name: MODEL_NAME
-          value: "seg_rnn"
-        - name: EXTRA_FILES
-          value: "model.json,param.pth,Model.py,RevIN.py"
+        - name: MODEL_FOLDERS
+          value: "./model1|./model2"
+        - name: MODEL_VERSIONS
+          value: "1.0|1.0"
+        - name: MODEL_NAMES
+          value: "seg_rnn|seg_rnn_one"
+        - name: PARAM_FILES
+          value: "model1.pth|model2.pth"
+        - name: TS_CONFIG_FILE
+          value: /home/model-server/config.properties
         ports:
         - containerPort: 8080
           name: inference
         - containerPort: 8081
           name: management
+        - containerPort: 8082
+          name: metric
         resources:
           requests:
-            cpu: "25m"
-            memory: "64Mi"
+            cpu: "512m"
+            memory: "512Mi"
           limits:
-            cpu: "100m"
-            memory: "256Mi"
+            cpu: "1"
+            memory: "1Gi"
         volumeMounts:
         - name: smb
-          mountPath: "/home/model-server/param.pth"
+          mountPath: "/home/model-server/model1"
+          subPath: "ttrade/model/SegRNN"
+          readOnly: true
+        - name: smb
+          mountPath: "/home/model-server/model2"
+          subPath: "ttrade/model/SegRNN-one"
+          readOnly: true
+        - name: smb
+          mountPath: "/home/model-server/model1.pth"
           subPath: "ttrade/model/SegRNN/results/SegRNN.pth"
           readOnly: true
         - name: smb
-          mountPath: "/home/model-server/Model.py"
-          subPath: "ttrade/model/SegRNN/Model.py"
+          mountPath: "/home/model-server/model2.pth"
+          subPath: "ttrade/model/results/SegRNN2.pth"
           readOnly: true
-        - name: smb
-          mountPath: "/home/model-server/RevIN.py"
-          subPath: "ttrade/model/SegRNN/RevIN.py"
-          readOnly: true
-        - name: smb
-          mountPath: "/home/model-server/model.json"
-          subPath: "ttrade/model/SegRNN/model.json"
-          readOnly: true
+        - name: config
+          mountPath: "/home/model-server/config.properties"
+          subPath: config.properties
       volumes:
       - name: smb
         persistentVolumeClaim:
           claimName: pvc-smb
+      - name: config
+        configMap:
+          name: torchserve-config
       restartPolicy: Always
       
