@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data-period-c-1020
+  namespace: ttrade
+  labels:
+    app: data-period-c
+spec:
+  template:
+    metadata:
+      name: data-period-c
+    spec:
+      nodeSelector:
+        gpu: nvidia
+      restartPolicy: Never
+      containers:
+      - name: data-period-c
+        image: dogring/tt-period:1.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PERIOD
+          value: "0.0060"
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1.5Gi"
+          limits: 
+            cpu: "1"
+            memory: "3Gi"
+        volumeMounts:
+          - name: smb
+            mountPath: "/source/local_values.py"
+            subPath: "ttrade/local_values.py"
+            readOnly: true
+          - name: smb-data
+            mountPath: "/data/raw"
+            subPath: "ttrade/raw"
+            readOnly: true
+          - name: smb-data
+            mountPath: "/data/target"
+            subPath: "ttrade/target"
+      volumes:
+        - name: smb-data
+          persistentVolumeClaim:
+            claimName: pvc-data-smb
+        - name: smb
+          persistentVolumeClaim:
+            claimName: pvc-smb
