@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: train-rl
+  namespace: ttrade
+spec:
+  template:
+    spec:
+      runtimeClassName: nvidia
+      nodeSelector:
+        gpu: nvidia
+      containers:
+      - name: cuda-container
+        image: dogring/tt-rltrain:0.9
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: "3"
+            memory: "8Gi"
+            nvidia.com/gpu: "1"
+        env:
+        - name: EPISODES
+          value: "2"
+        - name: MODEL_PTH
+          value: "/source/results/SegRNN.pth"
+        volumeMounts:
+          - name: datadir
+            mountPath: "/data/data"
+            subPath: "data"
+            readOnly: true
+          - name: datadir
+            mountPath: "/data/raw"
+            subPath: "raw"
+            readOnly: true
+          - name: smb
+            mountPath: "/source/local_values.py"
+            subPath: "ttrade/local_values.py"
+            readOnly: true
+          - name: smb
+            mountPath: "/model"
+            subPath: "ttrade/model/SegRNN"
+            readOnly: true
+          - name: smb
+            mountPath: "/source/results"
+            subPath: "ttrade/model/SegRNN/results"
+      volumes:
+      - name: datadir
+        hostPath:
+          path: /DATA1/ttrade
+          type: DirectoryOrCreate
+      - name: smb
+        persistentVolumeClaim:
+          claimName: pvc-smb
+      restartPolicy: Never
+      
