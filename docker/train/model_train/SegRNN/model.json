@@ -2,7 +2,7 @@
     "seq_len": 180,
     "pred_len": 8,
     "enc_in": 10,
-    "d_model": 128,
+    "d_model": 192,
     "dropout": 0.2,
     "rnn_type": "lstm",
     "dec_way": "pmf",

@@ -5,6 +5,7 @@ import pandas as pd
 import json
 import os
 
+num_workers = int(os.environ.get('NUM_WORKERS','4'))
 config_file = os.environ.get('DATA_CONFIG','/model/dataset.json')
 train_ratio=float(os.environ.get('TRAIN_RATIO','0.8'))
 with open(config_file,'r') as f:
@@ -38,5 +39,5 @@ for tick in config.get('tickers'):
 
 concat_train_dataset = ConcatDataset(train_datasets)
 concat_test_dataset = ConcatDataset(test_datasets)
-train_loader = DataLoader(concat_train_dataset, batch_size=64, shuffle=True, pin_memory=True, num_workers=2)
-test_loader = DataLoader(concat_test_dataset, batch_size=32, shuffle=False, pin_memory=True, num_workers=2)
+train_loader = DataLoader(concat_train_dataset, batch_size=128, shuffle=True, pin_memory=True, num_workers=num_workers)
+test_loader = DataLoader(concat_test_dataset, batch_size=64, shuffle=False, pin_memory=True, num_workers=num_workers)
