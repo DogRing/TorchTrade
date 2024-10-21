@@ -1,0 +1,12 @@
+{
+    "seq_len": 180,
+    "pred_len": 8,
+    "enc_in": 10,
+    "d_model": 192,
+    "dropout": 0.2,
+    "rnn_type": "lstm",
+    "dec_way": "pmf",
+    "seg_len": 4,
+    "channel_id": 1,
+    "revin": true
+}

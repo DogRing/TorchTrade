@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: train-one-gpu-1020
+  namespace: ttrade
+spec:
+  template:
+    spec:
+      runtimeClassName: nvidia
+      nodeSelector:
+        gpu: nvidia
+      containers:
+      - name: cuda-container
+        image: dogring/tt-train:1.5
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: "4"
+            memory: "4Gi"
+            nvidia.com/gpu: "1"
+        env:
+        - name: EPOCHES
+          value: "10"
+        - name: RESULT_PATH
+          value: "/source/results/SegRNN2.pth"
+        - name: NUM_WORKERS
+          value: "4"
+        volumeMounts:
+          - name: smb-data
+            mountPath: "/data/data"
+            subPath: "ttrade/data"
+            readOnly: true
+          - name: smb-data
+            mountPath: "/data/target"
+            subPath: "ttrade/target"
+            readOnly: true
+          - name: smb
+            mountPath: "/source/local_values.py"
+            subPath: "ttrade/local_values.py"
+            readOnly: true
+          - name: smb
+            mountPath: "/model"
+            subPath: "ttrade/model/SegRNN-one"
+            readOnly: true
+          - name: smb
+            mountPath: "/source/results"
+            subPath: "ttrade/model/results"
+      volumes:
+      # - name: datadir
+      #   hostPath:
+      #     path: /DATA1/ttrade
+      #     type: DirectoryOrCreate
+      - name: smb
+        persistentVolumeClaim:
+          claimName: pvc-smb
+      - name: smb-data
+        persistentVolumeClaim:
+          claimName: pvc-data-smb
+      restartPolicy: Never
+      
