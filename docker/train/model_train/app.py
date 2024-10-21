@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+from tqdm import tqdm
 import json
 import time
 import sys
@@ -10,6 +11,7 @@ from dataset import train_loader,test_loader
 from Model import Model,Configs
 
 num_epochs = int(os.environ.get('EPOCHES','50'))
+tqdm_refresh = int(os.environ.get('TQDM_REFRESH','1000'))
 param_path = os.environ.get('RESULT_PATH','/model/results/result.pt')
 config_file = os.environ.get('MODEL_CONFIG','/model/model.json')
 
@@ -31,7 +33,8 @@ print(f'Start At {time.strftime("%m-%d %H:%M:%S",time.localtime(start))}')
 for epoch in range(num_epochs):
     model.train()
     train_loss = 0.0
-    for input_tensor, target_tensor in train_loader:
+    train_pbar = tqdm(total=len(train_loader),desc=f'Epoch{epoch+1}/{num_epochs} [Train]',mininterval=20,position=0,leave=False)
+    for i, (input_tensor, target_tensor) in enumerate(train_loader):
         input_tensor = input_tensor.to(device)
         target_tensor = target_tensor.to(device)
         outputs = model(input_tensor)
@@ -40,6 +43,10 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
         train_loss += loss.item()
+        if (i + 1) % tqdm_refresh == 0 or (i + 1) == len(train_loader):
+            train_pbar.update(tqdm_refresh if i != len(train_loader)-1 else len(train_loader) % tqdm_refresh)
+            train_pbar.set_description(f'Epoch {epoch+1}/{num_epochs} [Train] loss: {train_loss / (i + 1):.4f}')
+    train_pbar.close()
     avg_train_loss = train_loss / len(train_loader)
     model.eval()
     test_loss = 0.0
