@@ -144,8 +144,8 @@ class Model(nn.Module):
             y = y.permute(0, 2, 1) + seq_last
         
         y, _ = self.attention(y,y,y)
-        y = self.final_linear(y.transpose(1,2)).squeeze(-1)
 
         if self.channel_id:
-            return y[:,self.channel_id:self.channel_id+1]
+            y = y[:,:,self.channel_id:self.channel_id+1]
+            return self.final_linear(y.squeeze(-1))
         return y
