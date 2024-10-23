@@ -1,59 +1,48 @@
 apiVersion: batch/v1
-kind: Job
+kind: CronJob
 metadata:
-  name: data-transform-smb-template
+  name: transform-data
   namespace: ttrade
-  labels:
-    app: data-transform
 spec:
-  template:
-    metadata:
-      name: data-transform-smb
+  schedule: "0 1 * * 0"
+  jobTemplate:
     spec:
-      nodeSelector:
-        gpu: nvidia
-      restartPolicy: Never
-      containers:
-      - name: data-transform
-        image: dogring/tt-transform:1.3
-        imagePullPolicy: IfNotPresent
-        resources:
-          requests:
-            cpu: "500m"
-            memory: "1.5Gi"
-          limits: 
-            cpu: "1"
-            memory: "2Gi"
-        env:
-          - name: SCALER_PATH
-            value: "/data/data/scaler/"
-        volumeMounts:
-          - name: smb
-            mountPath: "/source/local_values.py"
-            subPath: "ttrade/local_values.py"
-            readOnly: true
-          - name: smb
-            mountPath: "/data/raw"
-            subPath: "ttrade/raw"
-            readOnly: true
-          # - name: datadir
-          #   mountPath: "/data/raw"
-          #   subPath: "raw"
-          #   readOnly: true
-          - name: datadir
-            mountPath: "/data/data"
-            subPath: "data"
-          - name: config
-            mountPath: "/etc/config"
-            readOnly: true
-      volumes:
-        - name: datadir
-          hostPath:
-            path: /DATA1/ttrade
-            type: DirectoryOrCreate
-        - name: smb
-          persistentVolumeClaim:
-            claimName: pvc-smb
-        - name: config
-          configMap:
-            name: data-config
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: data-smb
+            image: dogring/tt-transform:1.3
+            imagePullPolicy: IfNotPresent
+            resources:
+              requests:
+                cpu: "500m"
+                memory: "1.5Gi"
+              limits: 
+                cpu: "1"
+                memory: "2Gi"
+            env:
+              - name: SCALER_PATH
+                value: "/data/data/scaler/"
+            volumeMounts:
+              - name: smb
+                mountPath: "/source/local_values.py"
+                subPath: "ttrade/local_values.py"
+                readOnly: true
+              - name: smb
+                mountPath: "/data/raw"
+                subPath: "ttrade/raw"
+                readOnly: true
+              - name: smb
+                mountPath: "/data/data"
+                subPath: "ttrade/data"
+              - name: config
+                mountPath: "/etc/config"
+                readOnly: true
+          volumes:
+            - name: smb
+              persistentVolumeClaim:
+                claimName: pvc-smb
+            - name: config
+              configMap:
+                name: data-config
