@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: train-segrnn
+  namespace: ttrade
+spec:
+  schedule: "0 0 31 2 *"
+  suspend: true
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          runtimeClassName: nvidia
+          nodeSelector:
+            gpu: nvidia
+          containers:
+          - name: cuda-container
+            image: dogring/tt-train:1.4
+            imagePullPolicy: IfNotPresent
+            resources:
+              limits:
+                cpu: "4"
+                memory: "4Gi"
+                nvidia.com/gpu: "1"
+            env:
+            - name: EPOCHES
+              value: "10"
+            - name: RESULT_PATH
+              value: "/source/results/SegRNN4.pth"
+            volumeMounts:
+              - name: smb-data
+                mountPath: "/data/data"
+                subPath: "ttrade/data"
+                readOnly: true
+              - name: smb
+                mountPath: "/source/local_values.py"
+                subPath: "ttrade/local_values.py"
+                readOnly: true
+              - name: smb
+                mountPath: "/model"
+                subPath: "ttrade/model/SegRNN"
+                readOnly: true
+              - name: smb
+                mountPath: "/source/results"
+                subPath: "ttrade/model/SegRNN/results"
+          volumes:
+          - name: smb
+            persistentVolumeClaim:
+              claimName: pvc-smb
+          - name: smb-data
+            persistentVolumeClaim:
+              claimName: pvc-data-smb
+          restartPolicy: Never
