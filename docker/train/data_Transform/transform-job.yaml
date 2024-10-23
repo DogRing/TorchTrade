@@ -12,7 +12,7 @@ spec:
           restartPolicy: Never
           containers:
           - name: data-smb
-            image: dogring/tt-transform:1.3
+            image: dogring/tt-transform:1.4
             imagePullPolicy: IfNotPresent
             resources:
               requests:
@@ -22,6 +22,8 @@ spec:
                 cpu: "1"
                 memory: "2Gi"
             env:
+              - name: FILE_PATHS
+                value: "/smb/data/"
               - name: SCALER_PATH
                 value: "/data/data/scaler/"
             volumeMounts:
@@ -36,6 +38,9 @@ spec:
               - name: smb
                 mountPath: "/data/data"
                 subPath: "ttrade/data"
+              - name: smb-data
+                mountPath: "/smb/data"
+                subPath: "ttrade/data"
               - name: config
                 mountPath: "/etc/config"
                 readOnly: true
@@ -43,6 +48,9 @@ spec:
             - name: smb
               persistentVolumeClaim:
                 claimName: pvc-smb
+            - name: smb-data
+              persistentVolumeClaim:
+                claimName: pvc-data-smb
             - name: config
               configMap:
                 name: data-config
