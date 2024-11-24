@@ -4,7 +4,7 @@ metadata:
   name: data-config
   namespace: ttrade
 data:
-  transform.json: |
+  indicator.json: |
     {
       "EMA": [5,30,60],
       "BB": [20],
@@ -13,3 +13,15 @@ data:
       "RSI": [14],
       "MACD": true
     }
+  scaler.json: |
+    {
+      "MM": [],
+      "STD": [],
+      "RB": []
+    }  
+  # scaler.json: |
+  #   {
+  #     "MM": [BP20,Mmt20,RSI14,close],
+  #     "STD": [EMA5,EMA30,EMA60,dis20,value],
+  #     "RB": [BW20]
+  #   }

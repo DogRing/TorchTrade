@@ -10,7 +10,6 @@ from dataset import train_loader,test_loader
 from Model import Model,Configs
 
 num_epochs = int(os.environ.get('EPOCHES','50'))
-tqdm_refresh = int(os.environ.get('TQDM_REFRESH','1000'))
 param_path = os.environ.get('RESULT_PATH','/model/results/result.pt')
 config_file = os.environ.get('MODEL_CONFIG','/model/model.json')
 kst_offset = 9 * 3600

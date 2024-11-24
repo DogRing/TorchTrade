@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: transform-data
+  name: transform-data2
   namespace: ttrade
 spec:
   schedule: "0 1 * * 0"
@@ -12,8 +12,8 @@ spec:
           restartPolicy: Never
           containers:
           - name: data-smb
-            image: dogring/tt-transform:1.4
-            imagePullPolicy: IfNotPresent
+            image: dogring/tt-transform:1.5
+            imagePullPolicy: Always
             resources:
               requests:
                 cpu: "500m"
@@ -23,7 +23,7 @@ spec:
                 memory: "2Gi"
             env:
               - name: FILE_PATHS
-                value: "/smb/data/"
+                value: "/data/data/"
               - name: SCALER_PATH
                 value: "/data/data/scaler/"
             volumeMounts:
@@ -37,7 +37,7 @@ spec:
                 readOnly: true
               - name: smb
                 mountPath: "/data/data"
-                subPath: "ttrade/data"
+                subPath: "ttrade/data2"
               - name: smb-data
                 mountPath: "/smb/data"
                 subPath: "ttrade/data"
