@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: trade-gp-xrp
+  namespace: ttrade
+  labels:
+    app: trade-gp-xrp
+spec:
+  tolerations:
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
+  containers:
+  - name: trade-bit
+    image: dogring/tt-trade:gp1.1
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+    env:
+    - name: TOPIC
+      value: krw-xrp
+    - name: TICK
+      value: KRW-XRP
+    - name: SIGNAL
+      value: macd_rsi
+    - name: PARAMS
+      value: "6,10,7,48,68,72"
+    - name: ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: upbit-key
+          key: accesskey
+    - name: SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: upbit-key
+          key: secretkey
+    volumeMounts:
+      - name: smb
+        mountPath: "/source/indicators.py"
+        subPath: "ttrade/lib/indicators.py"
+  volumes:
+  - name: smb
+    persistentVolumeClaim:
+      claimName: pvc-smb
+
