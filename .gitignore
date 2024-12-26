@@ -5,7 +5,7 @@ train/raw_data/
 train/data/
 train/target/
 train/modules/object/
-
+docker/model/*
 local_values.py
 
 *.pt
