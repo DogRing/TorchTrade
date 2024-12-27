@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: transform-data2
+  name: transform-data
   namespace: ttrade
 spec:
   schedule: "0 1 * * 0"
@@ -12,8 +12,8 @@ spec:
           restartPolicy: Never
           containers:
           - name: data-smb
-            image: dogring/tt-transform:1.5
-            imagePullPolicy: Always
+            image: dogring/tt-transform:1.0
+            imagePullPolicy: IfNotPresent
             resources:
               requests:
                 cpu: "500m"
@@ -32,25 +32,24 @@ spec:
                 subPath: "ttrade/local_values.py"
                 readOnly: true
               - name: smb
+                mountPath: "/source/indicators.py"
+                subPath: "ttrade/lib/indicators.py"
+                readOnly: true
+              - name: smb
+                mountPath: "/source/data_transform.py"
+                subPath: "ttrade/lib/data_transform.py"
+                readOnly: true
+              - name: azsmb
                 mountPath: "/data/raw"
                 subPath: "ttrade/raw"
                 readOnly: true
               - name: smb
                 mountPath: "/data/data"
-                subPath: "ttrade/data2"
-              - name: smb-data
-                mountPath: "/smb/data"
-                subPath: "ttrade/data"
-              - name: config
-                mountPath: "/etc/config"
-                readOnly: true
+                subPath: "ttrade/data/241212"
           volumes:
             - name: smb
               persistentVolumeClaim:
                 claimName: pvc-smb
-            - name: smb-data
+            - name: azsmb
               persistentVolumeClaim:
-                claimName: pvc-data-smb
-            - name: config
-              configMap:
-                name: data-config
+                claimName: pvc-azsmb
