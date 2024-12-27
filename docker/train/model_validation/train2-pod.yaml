@@ -1,0 +1,65 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: valid-segrnn
+  namespace: ttrade
+spec:
+  template:
+    spec:
+      tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+      runtimeClassName: nvidia
+      nodeSelector:
+        gpu: nvidia
+      containers:
+      - name: valid-container
+        image: dogring/tt-valid:2.0
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: "4"
+            memory: "4Gi"
+        env:
+        - name: VALID
+          value: "TRUE"
+        - name: MODEL_PATH
+          value: "/source/results/SegRNN4.pth"
+        - name: RESULT_PATH
+          value: "/source/results/try.pkl"
+        - name: TRADING_FEE
+          value: "0.995"
+        volumeMounts:
+          - name: smb
+            mountPath: "/data/raw"
+            subPath: "ttrade/raw"
+            readOnly: true
+          - name: smb-data
+            mountPath: "/data/data"
+            subPath: "ttrade/data"
+            readOnly: true
+          - name: smb
+            mountPath: "/source/local_values.py"
+            subPath: "ttrade/local_values.py"
+            readOnly: true
+          - name: smb
+            mountPath: "/model"
+            subPath: "ttrade/model/SegRNN"
+            readOnly: true
+          - name: smb
+            mountPath: "/source/results"
+            subPath: "ttrade/model/results"
+      volumes:
+      # - name: datadir
+      #   hostPath:
+      #     path: /DATA1/ttrade
+      #     type: DirectoryOrCreate
+      - name: smb
+        persistentVolumeClaim:
+          claimName: pvc-smb
+      - name: smb-data
+        persistentVolumeClaim:
+          claimName: pvc-data-smb
+      restartPolicy: Never
+      
