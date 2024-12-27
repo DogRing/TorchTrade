@@ -29,11 +29,14 @@ spec:
                 mountPath: "/source/local_values.py"
                 subPath: "ttrade/local_values.py"
                 readOnly: true
-              - name: smb
+              - name: azsmb
                 mountPath: "/data/raw"
                 subPath: "ttrade/raw"
           volumes:
             - name: smb
               persistentVolumeClaim:
                 claimName: pvc-smb
+            - name: azsmb
+              persistentVolumeClaim:
+                claimName: pvc-azsmb
           restartPolicy: OnFailure
